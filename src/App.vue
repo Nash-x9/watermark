@@ -78,7 +78,7 @@ const addWatermark = (text = 'Watermark', color = 'rgba(0, 0, 0, 0.5)', xGap = 1
         ctx.save()
         ctx.translate(x, y)
         ctx.rotate(radians)
-        ctx.fillText(text, 0, 0)
+        ctx.fillText(text, 10, 0)
         ctx.restore()
       }
     }
