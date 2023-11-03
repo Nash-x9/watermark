@@ -97,3 +97,23 @@ button {
 button:hover {
     background-color: #3838ab;
 }
+
+input[type="text"] {
+    border: 2px solid #ccc;
+    border-radius: 4px;
+    padding: 8px;
+    font-size: 16px;
+    width: 200px;
+}
+
+/* 鼠标悬停时的样式 */
+input[type="text"]:hover {
+    border-color: #888;
+}
+
+/* 获得焦点时的样式 */
+input[type="text"]:focus {
+    outline: none;
+    border-color: #555;
+    box-shadow: 0 0 5px #555;
+}

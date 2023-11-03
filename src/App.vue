@@ -9,6 +9,10 @@
         <button>下载图片</button>
       </div>
       <div>
+        <label for="watermarkText">水印文本: </label>
+        <input type="text" v-model="watermarkText" placeholder="Input something...">
+      </div>
+      <div>
         <label for="xGap">水平间隔: {{ xGap }}px</label>
         <input id="xGap" type="range" :min="xGapRange.min" :max="xGapRange.max" v-model.number="xGap"/>
       </div>
@@ -95,8 +99,17 @@ const addWatermark = (text = 'Watermark', color = 'rgba(0, 0, 0, 0.5)', xGap = 1
   }
 }
 
-watch([imageUrl, xGap, yGap, rotation], () => {
+watch([imageUrl, xGap, yGap, rotation, watermarkText], () => {
   if (imageUrl.value) {
+    const encoder = new TextEncoder();
+    const bytes = encoder.encode(watermarkText.value);
+    if (bytes.length > 0) {
+      xGapRange.min = bytes.length
+      xGapRange.max = bytes.length * 100
+      yGapRange.min = bytes.length
+      yGapRange.max = bytes.length * 100
+      xGap.value = bytes.length * 10
+    }
     addWatermark(watermarkText.value,
         'rgba(0, 0, 0, 0.5)',
         xGap.value,
