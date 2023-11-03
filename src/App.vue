@@ -10,11 +10,11 @@
       </div>
       <div>
         <label for="xGap">水平间隔: {{ xGap }}px</label>
-        <input id="xGap" type="range" min="20" max="200" v-model.number="xGap"/>
+        <input id="xGap" type="range" :min="xGapRange.min" :max="xGapRange.max" v-model.number="xGap"/>
       </div>
       <div>
         <label for="yGap">垂直间隔: {{ yGap }}px</label>
-        <input id="yGap" type="range" min="20" max="200" v-model.number="yGap"/>
+        <input id="yGap" type="range" :min="yGapRange.min" :max="yGapRange.max" v-model.number="yGap"/>
       </div>
       <div>
         <label for="rotation">旋转角度: {{ rotation }}°</label>
@@ -28,12 +28,21 @@
 </template>
 
 <script setup>
-import {ref, watch} from 'vue'
+import {reactive, ref, watch} from 'vue'
 
 const imageUrl = ref('')
 const fileInput = ref(null);
 const canvas = ref(null);
 const xGap = ref(100);
+const xGapRange = reactive({
+  min: 20,
+  max: 200
+})
+const yGapRange = reactive({
+  min: 20,
+  max: 200
+})
+
 const yGap = ref(50);
 const rotation = ref(-28)
 const watermarkText = ref('Watermark');
