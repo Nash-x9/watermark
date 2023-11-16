@@ -149,3 +149,22 @@ input[type=range]::-webkit-slider-thumb {
     border: solid 0.125em rgba(205, 224, 230, 0.5); /*设置边框*/
     box-shadow: 0 .125em .125em #3b4547; /*添加底部阴影*/
 }
+
+.form {
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.form-item {
+    width: 30%;
+    display: flex;
+    margin-bottom: 5px;
+}
+
+.form-item label {
+    width: 120px;
+}
+
+.form-item input {
+    justify-content: flex-end;
+}
