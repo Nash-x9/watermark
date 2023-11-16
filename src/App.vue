@@ -1,31 +1,39 @@
 <template>
   <div class="container">
     <div class="card" style="margin-top: 10px">
-      <button @click="openFileInput" style="width: 100%">点击上传</button>
-      <input hidden="" ref="fileInput" type="file" accept="image/*" @change="handleFileUpload"/>
-    </div>
-    <div class="card">
-      <div style="float: right">
-        <button>下载图片</button>
+
+      <div style="float: right;display: flex;flex-direction: column; gap: 5px">
+        <button @click="openFileInput">上传图片</button>
+        <input hidden="" ref="fileInput" type="file" accept="image/*" @change="handleFileUpload"/>
+        <button @click="downloadFile">下载图片</button>
       </div>
-      <div>
-        <label for="watermarkText">水印文本: </label>
-        <input type="text" v-model="watermarkText" placeholder="Input something...">
-      </div>
-      <div>
-        <label for="xGap">水平间隔: {{ xGap }}px</label>
-        <input id="xGap" type="range" :min="xGapRange.min" :max="xGapRange.max" v-model.number="xGap"/>
-      </div>
-      <div>
-        <label for="yGap">垂直间隔: {{ yGap }}px</label>
-        <input id="yGap" type="range" :min="yGapRange.min" :max="yGapRange.max" v-model.number="yGap"/>
-      </div>
-      <div>
-        <label for="rotation">旋转角度: {{ rotation }}°</label>
-        <input id="rotation" type="range" min="-90" max="90" v-model.number="rotation"/>
-      </div>
-      <div v-if="imageUrl" class="image-section">
-        <canvas ref="canvas" class="uploaded-image"></canvas>
+      <div class="form">
+        <div class="form-item" style="width: 100%">
+          <label for="watermarkText">水印文本: </label>
+          <input type="text" v-model="watermarkText" id="watermarkText" placeholder="Input something...">
+        </div>
+        <div class="form-item">
+          <label for="xGap">水平间隔: {{ xGap }}px</label>
+          <input id="xGap" type="range" :min="xGapRange.min" :max="xGapRange.max" v-model.number="xGap"
+                 :step="xGapRange.step"/>
+        </div>
+        <div class="form-item">
+          <label for="yGap">垂直间隔: {{ yGap }}px</label>
+          <input id="yGap" type="range" :min="yGapRange.min" :max="yGapRange.max" v-model.number="yGap"
+                 :step="yGapRange.step"/>
+        </div>
+        <div class="form-item">
+          <label for="rotation">旋转角度: {{ rotation }}°</label>
+          <input id="rotation" type="range" min="-90" max="90" v-model.number="rotation"/>
+        </div>
+        <div class="form-item">
+          <label for="colorPicker">水印颜色：</label>
+          <color-picker @change="colorChange" v-model:rgba="rgba"></color-picker>
+        </div>
+
+        <div v-if="imageUrl" class="image-section">
+          <canvas ref="canvas" class="uploaded-image"></canvas>
+        </div>
       </div>
     </div>
   </div>
@@ -40,29 +48,51 @@ const canvas = ref(null);
 const xGap = ref(100);
 const xGapRange = reactive({
   min: 20,
-  max: 200
+  max: 200,
+  step: 10
 })
 const yGapRange = reactive({
   min: 20,
-  max: 200
+  max: 200,
+  step: 10
 })
+
+const origin_file = ref();
 
 const yGap = ref(50);
 const rotation = ref(-28)
 const watermarkText = ref('Watermark');
+const rgba = ref("rgba(0, 0, 0, 0.5)");
+
+
+const colorChange = (e) => {
+  console.log(e); // {hex: '#ddd8c3', rgba: 'rgba(221,216,195,0.5849)'}
+}
 
 
 const openFileInput = () => {
   fileInput.value.click()
 }
+
+const downloadFile = () => {
+  if (canvas.value && origin_file.value) {
+    const link = document.createElement('a')
+    link.href = canvas.value.toDataURL();
+    const fileName = origin_file.value.name;
+    const fileExtension = fileName.substring(fileName.lastIndexOf('.') + 1);
+    link.download = fileName + "_watermark." + fileExtension
+    link.click()
+  }
+}
+
 const handleFileUpload = event => {
-  const file = event.target.files[0]
-  if (file) {
+  origin_file.value = event.target.files[0]
+  if (origin_file.value) {
     const reader = new FileReader()
     reader.onload = e => {
       imageUrl.value = e.target.result
     }
-    reader.readAsDataURL(file)
+    reader.readAsDataURL(origin_file.value)
   }
 }
 
@@ -99,19 +129,20 @@ const addWatermark = (text = 'Watermark', color = 'rgba(0, 0, 0, 0.5)', xGap = 1
   }
 }
 
-watch([imageUrl, xGap, yGap, rotation, watermarkText], () => {
+watch([imageUrl, xGap, yGap, rotation, watermarkText, rgba], () => {
   if (imageUrl.value) {
     const encoder = new TextEncoder();
     const bytes = encoder.encode(watermarkText.value);
     if (bytes.length > 0) {
-      xGapRange.min = bytes.length
+      xGapRange.min = bytes.length * 10
       xGapRange.max = bytes.length * 100
+      xGapRange.step = Math.floor(xGapRange.max / xGapRange.min)
       yGapRange.min = bytes.length
       yGapRange.max = bytes.length * 100
-      xGap.value = bytes.length * 10
+      yGapRange.step = Math.floor(xGapRange.max / xGapRange.min)
     }
     addWatermark(watermarkText.value,
-        'rgba(0, 0, 0, 0.5)',
+        rgba.value,
         xGap.value,
         yGap.value,
         rotation.value)
@@ -132,7 +163,7 @@ watch([imageUrl, xGap, yGap, rotation, watermarkText], () => {
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
   min-width: 85vw;
   max-width: 85vw;
-  margin: 5px auto;
+  margin: 10px auto;
   padding: 20px;
 }
 
