@@ -117,3 +117,35 @@ input[type="text"]:focus {
     border-color: #555;
     box-shadow: 0 0 5px #555;
 }
+
+input[type=range] {
+    -webkit-appearance: none;
+    width: 200px;
+    height: 30px;
+    background-color: rgba(82, 82, 250, 0.8);
+    border-radius: 5px; /*这个属性设置使填充进度条时的图形为圆角*/
+}
+
+input[type=range]::-webkit-slider-thumb {
+    -webkit-appearance: none; /*隐藏滑块*/
+}
+
+input[type=range]::-webkit-slider-runnable-track {
+    height: 30px;
+    border-radius: 5px; /*将轨道设为圆角的*/
+    box-shadow: 0 1px 1px #def3f8, inset 0 .12em .12em #0d1112; /*轨道内置阴影效果*/
+}
+
+input[type=range]:focus {
+    outline: none; /*原始的控件获取到焦点时，会显示包裹整个控件的边框，所以还需要把边框取消。*/
+}
+
+input[type=range]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 15px;
+    height: 30px;
+    background: #ffffff;
+    border-radius: 20%; /*外观设置为圆形*/
+    border: solid 0.125em rgba(205, 224, 230, 0.5); /*设置边框*/
+    box-shadow: 0 .125em .125em #3b4547; /*添加底部阴影*/
+}
