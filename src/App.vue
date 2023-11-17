@@ -30,10 +30,9 @@
           <label for="colorPicker">水印颜色：</label>
           <color-picker @change="colorChange" v-model:rgba="rgba"></color-picker>
         </div>
-
-        <div v-if="imageUrl" class="image-section">
-          <canvas ref="canvas" class="uploaded-image"></canvas>
-        </div>
+      </div>
+      <div v-if="imageUrl" class="image-section">
+        <canvas ref="canvas" class="uploaded-image"></canvas>
       </div>
     </div>
   </div>
