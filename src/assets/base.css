@@ -98,7 +98,7 @@ button:hover {
     background-color: #3838ab;
 }
 
-input[type="text"] {
+input[type="text"], input[type="number"] {
     border: 2px solid #ccc;
     border-radius: 4px;
     padding: 8px;
@@ -107,12 +107,12 @@ input[type="text"] {
 }
 
 /* 鼠标悬停时的样式 */
-input[type="text"]:hover {
+input[type="text"], input[type="number"]:hover {
     border-color: #888;
 }
 
 /* 获得焦点时的样式 */
-input[type="text"]:focus {
+input[type="text"], input[type="number"]:focus {
     outline: none;
     border-color: #555;
     box-shadow: 0 0 5px #555;
@@ -196,4 +196,9 @@ input[type=range]::-webkit-slider-thumb {
         cursor: pointer;
         transition: background-color 0.3s ease;
     }
+}
+
+.form-item-inline {
+    width: 100%;
+    display: flex;
 }

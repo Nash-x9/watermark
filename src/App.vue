@@ -8,22 +8,29 @@
         <button @click="downloadFile">下载图片</button>
       </div>
       <div class="form">
-        <div class="form-item" style="width: 100%">
-          <label for="watermarkText">水印文本: </label>
-          <input type="text" v-model="watermarkText" id="watermarkText" placeholder="Input something...">
+        <div class="form-item-inline">
+          <div class="form-item">
+            <label for="watermarkText">水印文本: </label>
+            <input type="text" v-model="watermarkText" id="watermarkText" placeholder="Input something...">
+          </div>
+          <div class="form-item">
+            <label for="canvasFontSize">字体大小: </label>
+            <input type="number" id="canvasFontSize" min="2" max="1000" v-model.number="canvasFontSize">
+          </div>
         </div>
+
         <div class="form-item">
-          <label for="xGap">水平间隔: {{ xGap }}px</label>
+          <label for="xGap">水平间隔</label>
           <input id="xGap" type="range" :min="xGapRange.min" :max="xGapRange.max" v-model.number="xGap"
                  :step="xGapRange.step"/>
         </div>
         <div class="form-item">
-          <label for="yGap">垂直间隔: {{ yGap }}px</label>
+          <label for="yGap">垂直间隔</label>
           <input id="yGap" type="range" :min="yGapRange.min" :max="yGapRange.max" v-model.number="yGap"
                  :step="yGapRange.step"/>
         </div>
         <div class="form-item">
-          <label for="rotation">旋转角度: {{ rotation }}°</label>
+          <label for="rotation">旋转角度:</label>
           <input id="rotation" type="range" min="-90" max="90" v-model.number="rotation"/>
         </div>
         <div class="form-item">
@@ -62,6 +69,7 @@ const yGap = ref(50);
 const rotation = ref(-28)
 const watermarkText = ref('Watermark');
 const rgba = ref("rgba(0, 0, 0, 0.5)");
+const canvasFontSize = ref(20)
 
 
 const openFileInput = () => {
@@ -99,7 +107,7 @@ const addWatermark = (text = 'Watermark', color = 'rgba(0, 0, 0, 0.5)', xGap = 1
     canvas.value.height = image.height
 
     ctx.drawImage(image, 0, 0)
-    ctx.font = '20px Arial'
+    ctx.font = canvasFontSize.value + 'px Arial'
     ctx.fillStyle = color
     const radians = (Math.PI / 180) * rotation // Convert degrees to radians
     for (let x = 0; x < canvas.value.width; x += xGap) {
@@ -107,7 +115,7 @@ const addWatermark = (text = 'Watermark', color = 'rgba(0, 0, 0, 0.5)', xGap = 1
         ctx.save()
         ctx.translate(x, y)
         ctx.rotate(radians)
-        ctx.fillText(text, 10, 0)
+        ctx.fillText(text, 20, 0)
         ctx.restore()
       }
     }
@@ -115,18 +123,40 @@ const addWatermark = (text = 'Watermark', color = 'rgba(0, 0, 0, 0.5)', xGap = 1
   }
 }
 
-watch([imageUrl, xGap, yGap, rotation, watermarkText, rgba], () => {
-  if (imageUrl.value) {
-    const encoder = new TextEncoder();
-    const bytes = encoder.encode(watermarkText.value);
-    if (bytes.length > 0) {
-      xGapRange.min = bytes.length * 10
-      xGapRange.max = bytes.length * 100
-      xGapRange.step = Math.floor(xGapRange.max / xGapRange.min)
-      yGapRange.min = bytes.length
-      yGapRange.max = bytes.length * 100
-      yGapRange.step = Math.floor(xGapRange.max / xGapRange.min)
+const resetXYRange = (resetDefaultGap = false) => {
+  if (canvas.value) {
+    const ctx = canvas.value.getContext('2d')
+    const textWidth = ctx.measureText(watermarkText.value).width
+    const textHeight = canvasFontSize.value
+    xGapRange.min = Math.floor(textWidth)
+    xGapRange.max = Math.floor(canvas.value.width)
+    xGapRange.step = Math.floor(canvas.value.width / textWidth)
+    yGapRange.min = Math.floor(textHeight)
+    yGapRange.max = Math.floor(canvas.value.height)
+    yGapRange.step = Math.floor(canvas.value.height / textHeight)
+
+    if (resetDefaultGap) {
+      xGap.value = xGapRange.min
+      yGap.value = yGapRange.min * 2 >= yGapRange.max ? yGapRange.max : yGapRange.min * 2;
     }
+  }
+}
+
+watch([imageUrl, canvasFontSize], () => {
+  if (imageUrl.value && canvasFontSize.value) {
+    resetXYRange(true)
+    addWatermark(watermarkText.value,
+        rgba.value,
+        xGap.value,
+        yGap.value,
+        rotation.value)
+  }
+})
+
+
+watch([xGap, yGap, rotation, watermarkText, rgba], () => {
+  if (imageUrl.value) {
+    resetXYRange()
     addWatermark(watermarkText.value,
         rgba.value,
         xGap.value,
