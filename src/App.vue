@@ -176,4 +176,15 @@ watch([imageUrl, xGap, yGap, rotation, watermarkText, rgba], () => {
   max-width: 100%;
   height: auto;
 }
+
+@media (max-width: 430px) {
+  .card {
+    background-color: #f2f2f2;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    min-width: 100vw;
+    max-width: 100vw;
+    margin: 0 auto;
+    padding: 20px;
+  }
+}
 </style>

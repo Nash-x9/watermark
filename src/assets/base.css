@@ -168,3 +168,32 @@ input[type=range]::-webkit-slider-thumb {
 .form-item input {
     justify-content: flex-end;
 }
+
+@media (max-width: 768px) {
+    .form-item label {
+        font-size: 10px;
+        line-height: 32px;
+        width: 100px;
+    }
+
+    .form-item {
+        width: 100%;
+        display: flex;
+        margin-bottom: 5px;
+    }
+
+    .form-item input[type="text"] {
+        width: 200px;
+    }
+
+    button {
+        background-color: #5252fa;
+        color: white;
+        border: none;
+        padding: 8px 12px;
+        border-radius: 5px;
+        font-size: 10px;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+    }
+}
