@@ -28,7 +28,7 @@
         </div>
         <div class="form-item">
           <label for="colorPicker">水印颜色：</label>
-          <color-picker @change="colorChange" v-model:rgba="rgba"></color-picker>
+          <color-picker v-model:rgba="rgba"></color-picker>
         </div>
       </div>
       <div v-if="imageUrl" class="image-section">
@@ -64,11 +64,6 @@ const watermarkText = ref('Watermark');
 const rgba = ref("rgba(0, 0, 0, 0.5)");
 
 
-const colorChange = (e) => {
-  console.log(e); // {hex: '#ddd8c3', rgba: 'rgba(221,216,195,0.5849)'}
-}
-
-
 const openFileInput = () => {
   fileInput.value.click()
 }
@@ -92,14 +87,6 @@ const handleFileUpload = event => {
       imageUrl.value = e.target.result
     }
     reader.readAsDataURL(origin_file.value)
-  }
-}
-
-const debounce = (func, wait) => {
-  let timeout
-  return (...args) => {
-    clearTimeout(timeout)
-    timeout = setTimeout(() => func.apply(this, args), wait)
   }
 }
 
